@@ -1,6 +1,7 @@
 const url = "https://randomuser.me/api/?results=16";
 const usersContainer = document.querySelector(".users-container");
-const errorTemplate = `<p class="error-message">oops :( users fetch failed</p>`;
+
+const errorMessage = (message) => `<p class="error-message">${message}</p>`;
 
 const userTemplate = (photo, name, email, gender, age) => {
   return `
@@ -27,7 +28,7 @@ async function getUsers() {
     const json = await response.json();
     return json.results;
   } catch {
-    usersContainer.innerHTML += errorTemplate;
+    usersContainer.innerHTML += errorMessage("oops :( users fetch failed");
   }
 }
 
@@ -35,8 +36,11 @@ async function app() {
   const initUsers = await getUsers();
   const users = initUsers.slice();
   renderUsers(users);
+  handleSearch(users);
   handleSort(users, sortByAge, ["#sort-ascending", "#sort-descending"]);
   handleSort(users, sortByName, ["#sort-az", "#sort-za"]);
+  handleFilterByGender(users, initUsers);
+  handleResetToDefault(initUsers);
 }
 
 const renderUsers = (users) => {
@@ -71,14 +75,63 @@ const handleSort = (users, sortFunc, [ascendingTrigger, descendingTrigger]) => {
   });
 };
 
-function sortByAge(users) {
+const handleFilterByGender = (users, initUsers) => {
+  const maleTrigger = document.querySelector("#gender-male");
+  const femaleTrigger = document.querySelector("#gender-female");
+  const allGendersTrigger = document.querySelector("#gender-all");
+
+  maleTrigger.addEventListener("click", () => {
+    const men = filterByGender(users, "male");
+    renderUsers(men);
+  });
+  femaleTrigger.addEventListener("click", () => {
+    const women = filterByGender(users, "female");
+    renderUsers(women);
+  });
+  allGendersTrigger.addEventListener("click", () => {
+    renderUsers(initUsers);
+  });
+};
+
+const handleResetToDefault = (initUsers) => {
+  const resetBtn = document.querySelector("#reset-btn");
+  resetBtn.addEventListener("click", () => {
+    renderUsers(initUsers);
+  });
+};
+const handleSearch = (users) => {
+  const searchInput = document.querySelector("#search-input");
+  searchInput.addEventListener("input", ({ target: { value } }) => {
+    searchUsers(users, value);
+  });
+};
+
+const sortByAge = (users) => {
   return users.sort((a, b) => a.dob.age - b.dob.age);
-}
-function sortByName(users) {
+};
+const sortByName = (users) => {
   return users.sort((a, b) => (a.name.first > b.name.first ? 1 : -1));
-}
-function filterByGender(users, gender) {
-  return users.filter((user) => user.gender === gender);
-}
+};
+const filterByGender = (users, gender) => {
+  return users.filter(({ gender: userGender }) => userGender === gender);
+};
+
+const searchUsers = (users, searchValue) => {
+  searchValue = searchValue.toLowerCase();
+  if (searchValue) {
+    const searchResults = users.filter(({ name: { first: firstName } }) => {
+      firstName = firstName.toLowerCase();
+      return firstName.includes(searchValue);
+    });
+    renderUsers(searchResults);
+
+    if (searchResults.length === 0) {
+      usersContainer.innerHTML = "";
+      usersContainer.innerHTML += errorMessage("users not found :(");
+    }
+  } else {
+    renderUsers(users);
+  }
+};
 
 app();
