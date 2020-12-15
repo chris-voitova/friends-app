@@ -12,12 +12,13 @@ body {
   display: grid;
   grid-template-columns: 1fr 3fr;
   background: linear-gradient(to bottom right, #f5f2fd, #2d88ff);
+  min-height: 100%;
 }
 
 .sidebar {
   box-shadow: 0px 0px 5px 2px rgba(218, 218, 218, 0.5);
   background: white;
-  padding: 32px 16px;
+  padding: 32px;
 }
 
 .title {
@@ -92,10 +93,7 @@ body {
   margin: 0 0 16px;
 }
 
-.sidebar-form__input {
-  margin: 0 8px;
-}
-
-.sidebar-form__input {
-  margin: 0 8px;
+.error-message {
+  color: red;
+  font-weight: bold;
 }

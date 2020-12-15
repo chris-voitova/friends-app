@@ -1,27 +1,10 @@
 const url = "https://randomuser.me/api/?results=16";
 const usersContainer = document.querySelector(".users-container");
-console.log(usersContainer);
-
-async function getUsers() {
-  try {
-    const response = await fetch(url);
-    const json = await response.json();
-    return json.results;
-  } catch {
-    console.log("oops :( fetch failed");
-  }
-}
-
-async function app() {
-  const initUsers = await getUsers();
-  const users = initUsers.slice();
-  console.log(users);
-  renderUsers(users);
-  return users;
-}
+const errorTemplate = `<p class="error-message">oops :( users fetch failed</p>`;
 
 const userTemplate = (photo, name, email, gender, age) => {
-  return `<div class="user">
+  return `
+	<div class="user">
 		 <img
 			class="user__photo"
 			src=${photo}
@@ -35,8 +18,26 @@ const userTemplate = (photo, name, email, gender, age) => {
 			<span class="user__gender">gender: ${gender}</span>
 			<span class="user__age">age: ${age}</span>
 		 </div>
-	  </div>`;
+	</div>`;
 };
+
+async function getUsers() {
+  try {
+    const response = await fetch(url);
+    const json = await response.json();
+    return json.results;
+  } catch {
+    usersContainer.innerHTML += errorTemplate;
+  }
+}
+
+async function app() {
+  const initUsers = await getUsers();
+  const users = initUsers.slice();
+  renderUsers(users);
+  handleSort(users, sortByAge, ["#sort-ascending", "#sort-descending"]);
+  handleSort(users, sortByName, ["#sort-az", "#sort-za"]);
+}
 
 const renderUsers = (users) => {
   let renderedUsers = "";
@@ -52,7 +53,22 @@ const renderUsers = (users) => {
       renderedUsers += userTemplate(photo, name, email, gender, age);
     }
   );
+  usersContainer.innerHTML = "";
   usersContainer.innerHTML += renderedUsers;
+};
+
+const handleSort = (users, sortFunc, [ascendingTrigger, descendingTrigger]) => {
+  ascendingTrigger = document.querySelector(ascendingTrigger);
+  descendingTrigger = document.querySelector(descendingTrigger);
+
+  ascendingTrigger.addEventListener("click", () => {
+    sortFunc(users);
+    renderUsers(users);
+  });
+  descendingTrigger.addEventListener("click", () => {
+    sortFunc(users).reverse();
+    renderUsers(users);
+  });
 };
 
 function sortByAge(users) {
@@ -65,4 +81,4 @@ function filterByGender(users, gender) {
   return users.filter((user) => user.gender === gender);
 }
 
-console.log(app());
+app();
