@@ -17,8 +17,8 @@
             <div class="sidebar-form__input-block">
               <label class="sidebar-form__label">
                 <input
-						class="sidebar-form__input"
-						id="search-input"
+                  class="sidebar-form__input search-input"
+                  id="search-input"
                   type="search"
                   name="search"
                   placeholder="First name"
@@ -29,7 +29,7 @@
 
           <fieldset class="sidebar-form__block">
             <span class="sidebar-form__title">Sort by age</span>
-            <div class="sidebar-form__input-block">
+            <div class="sidebar-form__input-block" id="age-sort">
               <label class="sidebar-form__label" for="sort-ascending"
                 >Age ↓</label
               >
@@ -55,7 +55,7 @@
 
           <fieldset class="sidebar-form__block">
             <span class="sidebar-form__title">Sort by name</span>
-            <div class="sidebar-form__input-block">
+            <div class="sidebar-form__input-block" id="name-sort">
               <label class="sidebar-form__label" for="sort-az">A-Z</label>
               <input
                 class="sidebar-form__input"
@@ -77,7 +77,7 @@
 
           <fieldset class="sidebar-form__block">
             <span class="sidebar-form__title">Filter by gender</span>
-            <div class="sidebar-form__input-block">
+            <div class="sidebar-form__input-block" id="gender-block">
               <label class="sidebar-form__label" for="gender-male">Male</label>
               <input
                 class="sidebar-form__input"
@@ -107,7 +107,9 @@
               />
             </div>
           </fieldset>
-          <button class="sidebar-form__reset" type="reset" id="reset-btn">Reset form</button>
+          <button class="sidebar-form__reset" type="reset" id="reset-btn">
+            Reset form
+          </button>
         </form>
       </aside>
       <section class="content">

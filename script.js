@@ -1,6 +1,14 @@
 const url = "https://randomuser.me/api/?results=16";
 const usersContainer = document.querySelector(".users-container");
 
+const initState = {
+  maleGender: false,
+  femaleGender: false,
+  allGenders: true,
+};
+
+let state = Object.assign({}, initState);
+
 const errorMessage = (message) => `<p class="error-message">${message}</p>`;
 
 const userTemplate = (photo, name, email, gender, age) => {
@@ -37,9 +45,12 @@ async function app() {
   const users = initUsers.slice();
   renderUsers(users);
   handleSearch(users);
-  handleSort(users, sortByAge, ["#sort-ascending", "#sort-descending"]);
-  handleSort(users, sortByName, ["#sort-az", "#sort-za"]);
   handleFilterByGender(users, initUsers);
+  handleSort(users, "#age-sort", sortByAge, [
+    "#sort-ascending",
+    "#sort-descending",
+  ]);
+  handleSort(users, "#name-sort", sortByName, ["#sort-az", "#sort-za"]);
   handleResetToDefault(initUsers);
 }
 
@@ -61,42 +72,89 @@ const renderUsers = (users) => {
   usersContainer.innerHTML += renderedUsers;
 };
 
-const handleSort = (users, sortFunc, [ascendingTrigger, descendingTrigger]) => {
+const handleSort = (
+  users,
+  container,
+  sortFunc,
+  [ascendingTrigger, descendingTrigger]
+) => {
+  container = document.querySelector(container);
   ascendingTrigger = document.querySelector(ascendingTrigger);
   descendingTrigger = document.querySelector(descendingTrigger);
 
-  ascendingTrigger.addEventListener("click", () => {
-    sortFunc(users);
-    renderUsers(users);
-  });
-  descendingTrigger.addEventListener("click", () => {
-    sortFunc(users).reverse();
-    renderUsers(users);
+  container.addEventListener("click", ({ target }) => {
+    const filteredUsers = checkSelectedState(users);
+
+    if (target === ascendingTrigger) {
+      sortFunc(filteredUsers);
+      renderUsers(filteredUsers);
+    }
+    if (target === descendingTrigger) {
+      sortFunc(filteredUsers).reverse();
+      renderUsers(filteredUsers);
+    }
   });
 };
 
+const checkSelectedState = (users) => {
+  let data;
+  state.maleGender
+    ? (data = filterByGender(users, "male"))
+    : state.femaleGender
+    ? (data = filterByGender(users, "female"))
+    : (data = users);
+  return data;
+};
 const handleFilterByGender = (users, initUsers) => {
   const maleTrigger = document.querySelector("#gender-male");
   const femaleTrigger = document.querySelector("#gender-female");
   const allGendersTrigger = document.querySelector("#gender-all");
+  const genderBlock = document.querySelector("#gender-block");
 
-  maleTrigger.addEventListener("click", () => {
-    const men = filterByGender(users, "male");
-    renderUsers(men);
+  genderBlock.addEventListener("click", ({ target }) => {
+    if (target === maleTrigger) {
+      resetState();
+      resetSorting();
+      const men = filterByGender(users, "male");
+      renderUsers(men);
+      state.maleGender = true;
+    }
+    if (target === femaleTrigger) {
+      resetState();
+      resetSorting();
+      const women = filterByGender(users, "female");
+      renderUsers(women);
+      state.femaleGender = true;
+    }
+    if (target === allGendersTrigger) {
+      resetState();
+      resetSorting();
+      renderUsers(initUsers);
+      state.allGenders = true;
+    }
   });
-  femaleTrigger.addEventListener("click", () => {
-    const women = filterByGender(users, "female");
-    renderUsers(women);
-  });
-  allGendersTrigger.addEventListener("click", () => {
-    renderUsers(initUsers);
-  });
+};
+
+const resetState = () => {
+  for (let stateItem in state) {
+    if (state.hasOwnProperty(stateItem)) {
+      state[stateItem] = false;
+    }
+  }
+};
+
+const resetSorting = () => {
+  const sortingFields = document.querySelectorAll(
+    "#sort-ascending, #sort-descending, #sort-az, #sort-za"
+  );
+  [...sortingFields].forEach((field) => (field.checked = false));
 };
 
 const handleResetToDefault = (initUsers) => {
   const resetBtn = document.querySelector("#reset-btn");
   resetBtn.addEventListener("click", () => {
     renderUsers(initUsers);
+    state = initState;
   });
 };
 const handleSearch = (users) => {

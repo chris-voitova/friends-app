@@ -85,15 +85,45 @@ body {
 }
 
 .sidebar-form__input-block {
-  display: flex;
+  display: inline-flex;
   align-items: center;
+  cursor: pointer;
+}
+
+.sidebar-form__input {
+  cursor: pointer;
+  margin: 0 8px;
+}
+
+.sidebar-form__input.search-input {
+  margin: 0;
+}
+
+.sidebar-form__label {
+  cursor: pointer;
 }
 
 .sidebar-form__block {
   margin: 0 0 16px;
 }
 
+.sidebar-form__reset {
+  cursor: pointer;
+}
+
 .error-message {
   color: red;
   font-weight: bold;
+}
+
+@media (max-width: 767px) {
+  .app-wrapper {
+    grid-template-columns: 1fr;
+  }
+  .sidebar {
+    padding: 32px 16px;
+  }
+  .users-container {
+    padding: 32px 16px;
+  }
 }

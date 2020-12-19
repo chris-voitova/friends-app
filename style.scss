@@ -79,15 +79,41 @@ body {
     margin: 0 0 8px;
   }
   &__input-block {
-    display: flex;
+    display: inline-flex;
     align-items: center;
+    cursor: pointer;
+  }
+  &__input {
+    cursor: pointer;
+    margin: 0 8px;
+    &.search-input {
+      margin: 0;
+    }
+  }
+  &__label {
+    cursor: pointer;
   }
   &__block {
     margin: 0 0 16px;
+  }
+  &__reset {
+    cursor: pointer;
   }
 }
 
 .error-message {
   color: red;
   font-weight: bold;
+}
+
+@media (max-width: 767px) {
+  .app-wrapper {
+    grid-template-columns: 1fr;
+  }
+  .sidebar {
+    padding: 32px 16px;
+  }
+  .users-container {
+    padding: 32px 16px;
+  }
 }
