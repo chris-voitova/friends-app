@@ -111,8 +111,7 @@ body {
   cursor: pointer;
 }
 
-.error-message {
-  color: red;
+.message {
   font-weight: bold;
 }
 
