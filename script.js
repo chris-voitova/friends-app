@@ -119,24 +119,15 @@ const handleFilterByGender = (users, initUsers) => {
 
   genderBlock.addEventListener("click", ({ target }) => {
     if (target === maleTrigger) {
-      resetState();
-      resetSorting();
       const men = filterByGender(users, "male");
-      renderUsers(men);
-      selectedGender = "male";
+      updateSelectedGender(men, "male");
     }
     if (target === femaleTrigger) {
-      resetState();
-      resetSorting();
       const women = filterByGender(users, "female");
-      renderUsers(women);
-      selectedGender = "female";
+      updateSelectedGender(women, "female");
     }
     if (target === allGendersTrigger) {
-      resetState();
-      resetSorting();
-      renderUsers(initUsers);
-      selectedGender = "all";
+      updateSelectedGender(initUsers, "all");
     }
   });
 };
@@ -185,7 +176,8 @@ const filterByGender = (users, gender) => {
 const searchUsers = (users, searchValue) => {
   searchValue = searchValue.toLowerCase();
   if (searchValue) {
-    const searchResults = users.filter(({ name: { first: firstName } }) => {
+    const filteredUsers = checkSelectedState(users);
+    const searchResults = filteredUsers.filter(({ name: { first: firstName } }) => {
       firstName = firstName.toLowerCase();
       return firstName.includes(searchValue);
     });
