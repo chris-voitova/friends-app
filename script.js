@@ -87,6 +87,7 @@ const handleSort = ({
   descendingTrigger,
 }) => {
   sortingTriggersContainer.addEventListener("click", ({ target }) => {
+    resetSearch();
     const filteredUsers = checkSelectedState(users);
 
     if (target === ascendingTrigger) {
@@ -134,12 +135,19 @@ const handleFilterByGender = (users, initUsers) => {
 
 const updateSelectedGender = (usersForRender, gender) => {
   resetState();
+  resetSearch();
   resetSorting();
   renderUsers(usersForRender);
   selectedGender = gender;
 };
+
 const resetState = () => {
   selectedGender = INIT_GENDER;
+};
+
+const resetSearch = () => {
+  const searchInput = document.querySelector("#search-input");
+  searchInput.value = "";
 };
 
 const resetSorting = () => {
@@ -154,6 +162,7 @@ const handleResetToDefault = (initUsers) => {
   resetButton.addEventListener("click", () => {
     renderUsers(initUsers);
     resetState();
+    resetSearch();
   });
 };
 const handleSearch = (users) => {
@@ -175,12 +184,14 @@ const filterByGender = (users, gender) => {
 
 const searchUsers = (users, searchValue) => {
   searchValue = searchValue.toLowerCase();
+  const filteredUsers = checkSelectedState(users);
   if (searchValue) {
-    const filteredUsers = checkSelectedState(users);
-    const searchResults = filteredUsers.filter(({ name: { first: firstName } }) => {
-      firstName = firstName.toLowerCase();
-      return firstName.includes(searchValue);
-    });
+    const searchResults = filteredUsers.filter(
+      ({ name: { first: firstName } }) => {
+        firstName = firstName.toLowerCase();
+        return firstName.includes(searchValue);
+      }
+    );
     renderUsers(searchResults);
 
     if (searchResults.length === 0) {
@@ -188,7 +199,7 @@ const searchUsers = (users, searchValue) => {
       USERS_CONTAINER.innerHTML += showMessage("users not found");
     }
   } else {
-    renderUsers(users);
+    renderUsers(filteredUsers);
   }
 };
 
