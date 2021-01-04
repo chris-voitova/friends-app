@@ -46,6 +46,7 @@ body {
   &__info {
     display: flex;
     flex-direction: column;
+    word-break: break-word;
   }
   &__photo {
     border-radius: 50%;
